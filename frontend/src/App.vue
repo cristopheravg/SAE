@@ -176,11 +176,6 @@ const sidebarOpen = ref(true)
 
 onMounted(() => {
   authStore.restoreSession()
-  
-  // Notificar a la app nativa que la app está lista
-  if (window.AndroidApp) {
-    console.log('✅ App nativa detectada')
-  }
 })
 
 const logout = () => {
@@ -201,24 +196,13 @@ const showNotification = (message, type = 'success', duration = 3000) => {
 window.$notify = showNotification
 </script>
 
-<style>
-/* CSS GLOBAL - NO SCOPED */
-* {
-  margin: 0;
-  padding: 0;
+<style scoped>
+:global(*) {
   box-sizing: border-box;
 }
 
-html, body {
-  width: 100%;
-  height: 100%;
-  min-height: 100%;
+:global(body) {
   margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-}
-
-body {
   font-family:
     -apple-system,
     BlinkMacSystemFont,
@@ -226,6 +210,7 @@ body {
     'Helvetica Neue',
     system-ui,
     sans-serif;
+
   background: #fafafa;
   color: #2c2c2c;
   -webkit-font-smoothing: antialiased;
@@ -233,16 +218,8 @@ body {
 }
 
 #app {
-  width: 100%;
-  height: 100%;
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
+  min-height: 100vh;
 }
-</style>
-
-<style scoped>
-/* CSS SCOPED - SOLO PARA ESTE COMPONENTE */
 
 /* TOPBAR */
 .topbar {
@@ -252,7 +229,6 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  flex-shrink: 0;
 }
 
 .topbar-content {
@@ -449,9 +425,7 @@ body {
 /* LAYOUT */
 .app-layout {
   display: flex;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
+  min-height: calc(100vh - 56px);
 }
 
 .app-layout.sidebar-collapsed .sidebar {
@@ -466,7 +440,6 @@ body {
   overflow-y: auto;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   padding: 0;
-  flex-shrink: 0;
 }
 
 .nav-menu {
@@ -533,7 +506,6 @@ body {
   padding: 32px 40px;
   overflow-y: auto;
   position: relative;
-  min-width: 0;
 }
 
 .content-inner {
@@ -632,7 +604,7 @@ body {
     position: fixed;
     left: 0;
     top: 56px;
-    height: calc(100% - 56px);
+    height: calc(100vh - 56px);
     z-index: 99;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
   }
