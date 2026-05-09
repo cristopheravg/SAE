@@ -100,6 +100,7 @@ const handleLogin = async () => {
     linear-gradient(135deg, #eef2f7 0%, #dfe8f1 45%, #cfdbe8 100%);
   position: relative;
   overflow: hidden;
+  min-height: 100dvh;
 }
 
 /* Glow decorativo */
@@ -329,6 +330,8 @@ form {
 @media (max-width: 480px) {
   .login-container {
     padding: 1rem;
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 
   .login-card {
@@ -338,7 +341,7 @@ form {
 
   .login-header h1 {
     font-size: 1.7rem;
-  }
+  } 
 
   .login-icon {
     width: 66px;
