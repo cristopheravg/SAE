@@ -18,6 +18,8 @@ function verifyToken(req, res, next) {
   }
 }
 
+
+
 // Verificar que el usuario es administrador
 function isAdmin(req, res, next) {
   if (req.user.rol !== 'admin') {
