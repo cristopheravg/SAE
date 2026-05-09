@@ -4,7 +4,7 @@
       <div class="login-header">
         <div class="login-icon">📚</div>
         <h1>IEX SAE</h1>
-        <p>Sistema Académico Escolar</p>
+        <p>Sistema de Administración Escolar</p>
       </div>
 
       <form @submit.prevent="handleLogin">
