@@ -88,8 +88,18 @@ const handleLogin = async () => {
 
 
 <style scoped>
+/* Reset y configuración global para WebView */
 .login-container {
-  min-height: 100vh;
+  /* Uso combinado de unidades para máxima compatibilidad */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  
   display: flex;
   align-items: center;
   justify-content: center;
@@ -99,8 +109,14 @@ const handleLogin = async () => {
     radial-gradient(circle at bottom right, rgba(26, 74, 111, 0.20), transparent 30%),
     linear-gradient(135deg, #eef2f7 0%, #dfe8f1 45%, #cfdbe8 100%);
   position: relative;
-  overflow: hidden;
-  min-height: 100dvh;
+  overflow: auto;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* Asegurar que el contenedor no tenga márgenes */
+.login-container * {
+  box-sizing: border-box;
 }
 
 /* Glow decorativo */
@@ -114,6 +130,7 @@ const handleLogin = async () => {
   filter: blur(90px);
   opacity: 0.25;
   z-index: 0;
+  pointer-events: none;
 }
 
 .login-container::before {
@@ -142,6 +159,7 @@ const handleLogin = async () => {
     0 20px 50px rgba(15, 23, 42, 0.15),
     0 6px 20px rgba(44, 125, 160, 0.08);
   animation: fadeIn 0.35s ease;
+  margin: auto;
 }
 
 /* Header */
@@ -271,14 +289,12 @@ form {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow:
-    0 12px 28px rgba(44, 125, 160, 0.28);
+  box-shadow: 0 12px 28px rgba(44, 125, 160, 0.28);
 }
 
 .btn-login:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow:
-    0 16px 34px rgba(44, 125, 160, 0.35);
+  box-shadow: 0 16px 34px rgba(44, 125, 160, 0.35);
 }
 
 .btn-login:disabled {
@@ -326,12 +342,10 @@ form {
   }
 }
 
-/* Responsive */
+/* Responsive para móviles */
 @media (max-width: 480px) {
   .login-container {
     padding: 1rem;
-    min-height: 100vh;
-    min-height: 100dvh;
   }
 
   .login-card {
@@ -352,5 +366,74 @@ form {
   .role-selector {
     grid-template-columns: 1fr;
   }
+  
+  .form-group input {
+    height: 45px;
+  }
+  
+  .btn-login {
+    height: 47px;
+  }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 360px) {
+  .login-card {
+    padding: 1.2rem;
+  }
+  
+  .login-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .login-icon {
+    width: 55px;
+    height: 55px;
+    font-size: 1.5rem;
+  }
+}
+
+/* Para tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .login-card {
+    max-width: 500px;
+    padding: 2.5rem;
+  }
+  
+  .login-header h1 {
+    font-size: 2.2rem;
+  }
+}
+
+/* Ajuste para WebView en Android */
+@media (min-width: 1025px) {
+  .login-container {
+    padding: 2rem;
+  }
+  
+  .login-card {
+    max-width: 450px;
+  }
+}
+</style>
+
+<!-- CSS global para asegurar que el body y html también ocupen toda la altura -->
+<style>
+/* Este es CSS global, no scoped */
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background: linear-gradient(135deg, #eef2f7 0%, #dfe8f1 45%, #cfdbe8 100%);
+}
+
+#app {
+  display: block;
 }
 </style>

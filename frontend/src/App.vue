@@ -176,6 +176,11 @@ const sidebarOpen = ref(true)
 
 onMounted(() => {
   authStore.restoreSession()
+  
+  // Notificar a la app nativa que la app está lista
+  if (window.AndroidApp) {
+    console.log('✅ App nativa detectada')
+  }
 })
 
 const logout = () => {
@@ -196,13 +201,24 @@ const showNotification = (message, type = 'success', duration = 3000) => {
 window.$notify = showNotification
 </script>
 
-<style scoped>
-:global(*) {
+<style>
+/* CSS GLOBAL - NO SCOPED */
+* {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-:global(body) {
+html, body {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
   margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
   font-family:
     -apple-system,
     BlinkMacSystemFont,
@@ -210,7 +226,6 @@ window.$notify = showNotification
     'Helvetica Neue',
     system-ui,
     sans-serif;
-
   background: #fafafa;
   color: #2c2c2c;
   -webkit-font-smoothing: antialiased;
@@ -218,8 +233,16 @@ window.$notify = showNotification
 }
 
 #app {
-  min-height: 100vh;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
+</style>
+
+<style scoped>
+/* CSS SCOPED - SOLO PARA ESTE COMPONENTE */
 
 /* TOPBAR */
 .topbar {
@@ -229,6 +252,7 @@ window.$notify = showNotification
   position: sticky;
   top: 0;
   z-index: 100;
+  flex-shrink: 0;
 }
 
 .topbar-content {
@@ -425,7 +449,9 @@ window.$notify = showNotification
 /* LAYOUT */
 .app-layout {
   display: flex;
-  min-height: calc(100vh - 56px);
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .app-layout.sidebar-collapsed .sidebar {
@@ -440,6 +466,7 @@ window.$notify = showNotification
   overflow-y: auto;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   padding: 0;
+  flex-shrink: 0;
 }
 
 .nav-menu {
@@ -506,6 +533,7 @@ window.$notify = showNotification
   padding: 32px 40px;
   overflow-y: auto;
   position: relative;
+  min-width: 0;
 }
 
 .content-inner {
@@ -604,7 +632,7 @@ window.$notify = showNotification
     position: fixed;
     left: 0;
     top: 56px;
-    height: calc(100vh - 56px);
+    height: calc(100% - 56px);
     z-index: 99;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
   }
