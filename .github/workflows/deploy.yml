@@ -1,0 +1,118 @@
+name: Deploy SAE
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: parajedorteoarango.com
+          username: admin
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+          script: |
+            set -e
+
+            echo "=================================="
+            echo "🚀 INICIANDO DEPLOY SAE"
+            echo "=================================="
+
+            # ============================================
+            # NVM / NODE
+            # ============================================
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+            nvm use 20
+
+            echo "Node: $(node -v)"
+            echo "NPM: $(npm -v)"
+
+            # ============================================
+            # ACTUALIZAR REPOSITORIO
+            # ============================================
+            cd /home/admin/xochilhuitl/sae
+
+            echo "📦 Actualizando código..."
+            git fetch --all
+            git reset --hard origin/master
+            git pull origin master
+
+            # ============================================
+            # FRONTEND
+            # ============================================
+            echo "🔧 Frontend..."
+
+            cd frontend
+
+            npm ci
+
+            echo "📝 Generando .env frontend..."
+
+            cat > .env <<EOF
+            VITE_API_URL=${{ secrets.VITE_API_URL }}
+            VITE_APP_NAME=${{ secrets.VITE_APP_NAME }}
+            EOF
+
+            echo "🔨 Build frontend..."
+            npm run build
+
+            if [ ! -d "dist" ]; then
+              echo "❌ Error: dist no existe"
+              exit 1
+            fi
+
+            echo "✅ Frontend compilado"
+
+            # ============================================
+            # BACKEND
+            # ============================================
+            echo "🔧 Backend..."
+
+            cd ../backend
+
+            npm ci --only=production
+
+            echo "📝 Generando .env backend..."
+
+            cat > .env <<EOF
+            PORT=${{ secrets.PORT }}
+            NODE_ENV=production
+            DB_HOST=${{ secrets.DB_HOST }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_NAME=${{ secrets.DB_NAME }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            JWT_EXPIRE=${{ secrets.JWT_EXPIRE }}
+            EOF
+
+            # ============================================
+            # PM2
+            # ============================================
+            echo "🚀 Reiniciando backend..."
+
+            if pm2 describe sae-backend > /dev/null; then
+              pm2 restart sae-backend
+            else
+              pm2 start ecosystem.config.cjs
+            fi
+
+            pm2 save
+
+            # ============================================
+            # STATUS
+            # ============================================
+            echo "📊 Estado PM2"
+            pm2 status
+
+            echo "=================================="
+            echo "✅ DEPLOY COMPLETADO"
+            echo "=================================="
